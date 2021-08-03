@@ -1,119 +1,131 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MovieWebsite.Characters.Models;
+using MovieWebsite.Characters.Models.Databases;
+using MovieWebsite.Shared;
 
-namespace MovieWebsite.Characters.Models.Databases
+namespace MovieWebsite.Characters.Controllers
 {
     [Route("Characters")]
-    public class CharacterContext : Controller
+    public class CharacterController : Controller
     {
-                [HttpGet("FetchMovie")]
-        public async Task<IActionResult> FetchMovie(long id)
+        [HttpGet("FetchCharacter")]
+        public async Task<IActionResult> FetchCharacter(long id)
         {
-            await using var db = new MovieContext();
-            var movie = await db.Movies
+            await using var db = new CharacterContext();
+            var character = await db.Characters
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if (movie is null) return NotFound("Requested movie not found");
-            return Json(movie);
+            if (character is null) return NotFound("Requested Character not found");
+            return Json(character);
         }
 
         /// <summary>
-        /// Adds movie to database
+        /// Adds Character to database
         /// </summary>
-        /// <param name="name">Movie name in russian</param>
-        /// <param name="originalName">Movie name in its original language</param>
-        /// <param name="posterId">Id of movie poster on image server</param>
-        /// <param name="description">Description of movie in Russian</param>
-        /// <param name="directorIds">Ids of movie directors</param>
-        /// <param name="actorIds">Ids of movie actors</param>
-        /// <param name="characterIds">Ids of movie characters</param>
-        /// <param name="genres">Genre of movie see <see cref="Genre"/></param>
-        /// <returns>Returns id of added movie if success</returns>
+        /// <param name="name">Character name in russian</param>
+        /// <param name="originalName">Character name in its original language</param>
+        /// <param name="posterId">Id of Character poster on image server</param>
+        /// <param name="description">Description of Character in Russian</param>
+        /// <param name="directorIds">Ids of Character directors</param>
+        /// <param name="actorIds">Ids of Character actors</param>
+        /// <param name="characterIds">Ids of Character characters</param>
+        /// <param name="genres">Genre of Character see <see cref="Genre"/></param>
+        /// <returns>Returns id of added Character if success</returns>
         [Authorize()]
-        [HttpPost("AddMovie")]
-        public async Task<IActionResult> AddMovie(string name, string originalName, long posterId, string description, HashSet<Genre> genres)
+        [HttpPost("AddCharacter")]
+        public async Task<IActionResult> AddCharacter(string name, string originalName, long posterId, string description,
+            [FromQuery] HashSet<long> persons, [FromQuery] HashSet<long> movies)
         {
-            await using var db = new MovieContext();
-            var movie = new Movie
+            await using var db = new CharacterContext();
+            var character = new Character
             {
-                Name = name,
-                OriginalName = originalName,
+                FullName = name,
+                OriginalFullName = originalName,
                 PosterId = posterId,
                 Description = description,
-                Genres = genres
+                Persons = persons,
+                Movies = movies,
             };
-            db.Movies.Add(movie);
+            await db.Characters.AddAsync(character);
             
             await db.SaveChangesAsync();
-            return Ok(new {id=movie.Id});
+            return Ok(new {id=character.Id});
         }
 
         /// <summary>
-        /// Updates movie in database
+        /// Updates Character in database
         /// </summary>
-        /// <param name="id">Id of movie to update</param>
-        /// <param name="name">Movie name in russian, set null if you dont want to update</param>
-        /// <param name="originalName">Movie name in its original language, set null if you dont want to update</param>
-        /// <param name="posterId">Id of movie poster on image server, set null if you dont want to update</param>
-        /// <param name="description">Description of movie in Russian, set null if you dont want to update</param>
-        /// <param name="directorIds">Ids of movie directors, set null if you dont want to update</param>
-        /// <param name="actorIds">Ids of movie actors, set null if you dont want to update</param>
-        /// <param name="characterIds">Ids of movie characters, set null if you dont want to update</param>
-        /// <param name="genres">Genre of movie see, set null if you dont want to update <see cref="Genre"/></param>
-        /// <returns>Returns id of added movie if success, set null if you dont want to update</returns>
+        /// <param name="id">Id of Character to update</param>
+        /// <param name="name">Character name in russian, set null if you dont want to update</param>
+        /// <param name="originalName">Character name in its original language, set null if you dont want to update</param>
+        /// <param name="posterId">Id of Character poster on image server, set null if you dont want to update</param>
+        /// <param name="description">Description of Character in Russian, set null if you dont want to update</param>
+        /// <param name="directorIds">Ids of Character directors, set null if you dont want to update</param>
+        /// <param name="actorIds">Ids of Character actors, set null if you dont want to update</param>
+        /// <param name="characterIds">Ids of Character characters, set null if you dont want to update</param>
+        /// <param name="genres">Genre of Character see, set null if you dont want to update <see cref="Genre"/></param>
+        /// <returns>Returns id of added Character if success, set null if you dont want to update</returns>
         [Authorize]
-        [HttpPost("UpdateMovie")]
-        public async Task<IActionResult> UpdateMovie(long id, string? name, string? originalName, long? posterId, string? description,
-            [FromQuery] List<long>? directorIds, [FromQuery] List<long>? actorIds, [FromQuery] List<long>? characterIds, [FromQuery] HashSet<Genre>? genres)
+        [HttpPost("UpdateCharacter")]
+        public async Task<IActionResult> UpdateCharacter(long id, string? name, string? originalName, long? posterId, string? description,
+            [FromQuery] HashSet<long>? persons, [FromQuery] HashSet<long>? movies)
         {
             //this function should not be run very often, so efficiency is not so important
-            await using var db = new MovieContext();
-            var movie = await db.Movies
+            await using var db = new CharacterContext();
+            var character = await db.Characters
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if (movie is null) return BadRequest("Movie not found");
+            if (character is null) return BadRequest("Character not found");
             if (originalName is not null)
-                movie.OriginalName = originalName;
+                character.OriginalFullName = originalName;
             if (posterId > 0)
-                movie.PosterId = posterId.Value;
+                character.PosterId = posterId.Value;
             if (description is not null)
-                movie.Description = description;
+                character.Description = description;
             if (name is not null)
-                movie.Name = name;
-            if (genres is not null && genres.Count > 0)
-                movie.Genres = genres;
+                character.FullName = name;
+            if (persons is not null && persons.Count > 0)
+                character.Persons = persons;
+            if (movies is not null && movies.Count > 0)
+                character.Movies = movies;
             
             await db.SaveChangesAsync();
-            return Ok(new {id=movie.Id});
+            return Ok(new {id=character.Id});
         }
         
         /// <summary>
-        /// Deletes movie from database
+        /// Deletes Character from database
         /// </summary>
-        /// <param name="id">Id of movie to delete</param>
+        /// <param name="id">Id of Character to delete</param>
         /// <returns>Returns Ok if success</returns>
         [Authorize(Roles = "admin")]
-        [HttpDelete("RemoveMovie")]
-        public async Task<IActionResult> RemoveMovie(int id)
+        [HttpDelete("RemoveCharacter")]
+        public async Task<IActionResult> RemoveCharacter(int id)
         {
-            await using var db = new MovieContext();
-            var movie = await db.Movies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-            if (movie is null) return NotFound();
-            db.Movies.Remove(movie);
+            await using var db = new CharacterContext();
+            var character = await db.Characters.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            if (character is null) return NotFound();
+            db.Characters.Remove(character);
             await db.SaveChangesAsync();
             return Ok();
         }
         
         
         //TODO: More settings
-        [HttpGet("FetchMovies")]
-        public async Task<IActionResult> FetchMovies(uint lenght, uint skip)
+        [HttpGet("FetchCharacters")]
+        public async Task<IActionResult> FetchCharacters(uint lenght, uint skip)
         {
-            await using var db = new MovieContext();
-            var movies = await db.Movies.AsNoTracking()
+            await using var db = new CharacterContext();
+            var characters = await db.Characters.AsNoTracking()
                 .OrderBy(x=>x.Id)
                 .Skip((int) skip)
                 .Take((int) lenght)
                 .ToArrayAsync();
-            return Json(movies);
+            return Json(characters);
         }
     }
 }

@@ -5,19 +5,14 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using MovieWebsite.Accounts.Models;
+using MovieWebsite.Accounts.Models.Databases;
+using MovieWebsite.Shared;
 
 namespace MovieWebsite.Accounts.Controllers
 {
     public class AccountController : Controller
     {
-        // тестовые данные вместо использования базы данных
-        private List<Account> people = new List<Account>
-        {
-            new Account {Login="admin@gmail.com", Password="12345", Role = "admin" },
-            new Account { Login="qwerty@gmail.com", Password="55555", Role = "user" }
-        };
- 
+
         [HttpPost("/token")]
         public IActionResult Token(string username, string password)
         {
@@ -49,12 +44,14 @@ namespace MovieWebsite.Accounts.Controllers
  
         private ClaimsIdentity GetIdentity(string username, string password)
         {
-            var person = people.FirstOrDefault(x => x.Login == username && x.Password == password);
+            using var accountContext = new AccountContext();
+            var person = accountContext.Accounts.FirstOrDefault(x => x.Login == username && x.Password == password);
             if (person == null) return null;
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, person.Login),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role)
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role),
+                new Claim("role", person.Role),
             };
             var claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,

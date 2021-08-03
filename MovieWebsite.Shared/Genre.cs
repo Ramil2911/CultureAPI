@@ -1,7 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-
-namespace MovieWebsite.Movies.Models
+﻿namespace MovieWebsite.Shared
 {
     public enum Genre : ushort
     {

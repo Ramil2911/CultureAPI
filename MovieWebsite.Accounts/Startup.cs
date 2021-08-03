@@ -1,15 +1,15 @@
 using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using MovieWebsite.Models;
+using Microsoft.OpenApi.Models;
+using MovieWebsite.Shared;
 
-namespace MovieWebsite
+namespace MovieWebsite.Accounts
 {
     public class Startup
     {

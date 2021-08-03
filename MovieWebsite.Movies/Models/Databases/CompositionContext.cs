@@ -2,7 +2,7 @@
 
 namespace MovieWebsite.Movies.Models.Databases
 {
-    public class ComnpositionContext : DbContext
+    /*public class ComnpositionContext : DbContext
     {
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Serial> Serials { get; set; }
@@ -160,5 +160,5 @@ namespace MovieWebsite.Movies.Models.Databases
                     .WithMany(y=>y.PersonCharacters)
                     .HasForeignKey(y=>y.PersonId));
         }
-    }
+    }*/
 }

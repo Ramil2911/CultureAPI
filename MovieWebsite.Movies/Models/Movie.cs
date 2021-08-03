@@ -1,9 +1,9 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MovieWebsite.Shared;
 
-namespace MovieWebsite.Movies.Models.Compositions
+namespace MovieWebsite.Movies.Models
 {
     public class Movie
     {
@@ -16,20 +16,14 @@ namespace MovieWebsite.Movies.Models.Compositions
         
         [MinLength(2)]
         public string Name { get; set; }
+        
         [MinLength(2)]
         public string OriginalName { get; set; }
 
         [Required, MinLength(1)] public HashSet<Genre> Genres { get; set; } = new HashSet<Genre>();
         
-        public override Short CreateShort()
-        {
-            return new ShortMovie() {Id = Id, Name = Name};
-        }
-    }
-
-    public class ShortMovie : Short
-    {
-        public override long Id { get; set; }
-        public string Name { get; init; }
+        [Required] public HashSet<long> DirectorIds { get; set; } = new HashSet<long>();
+        [Required] public HashSet<long> ActorIds { get; set; } = new HashSet<long>();
+        [Required] public HashSet<long> CharacterIds { get; set; } = new HashSet<long>();
     }
 }

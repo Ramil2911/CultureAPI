@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace MovieWebsite.Accounts.Models
+namespace MovieWebsite.Shared
 {
     public class AuthOptions
     {
