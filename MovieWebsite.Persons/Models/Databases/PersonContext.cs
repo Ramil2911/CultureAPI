@@ -5,6 +5,12 @@ namespace MovieWebsite.Persons.Models.Databases
     public class PersonContext : DbContext
     {
         public DbSet<Person> Persons { get; set; }
+
+        public PersonContext()
+        {
+            Database.EnsureCreated();
+        }
+        
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -18,7 +24,7 @@ namespace MovieWebsite.Persons.Models.Databases
         {
             Database.EnsureCreated();
 
-            base.OnModelCreating(modelBuilder);
+
         }
     }
 }

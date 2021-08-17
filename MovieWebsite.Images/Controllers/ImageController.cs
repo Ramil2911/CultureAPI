@@ -13,7 +13,7 @@ namespace MovieWebsite.Images.Controllers
     public class ImageController : Controller
     {
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetImage(long id)
+        public async Task<IActionResult> GetImage(int id)
         {
             await using var db = new ImageContext();
             var image = await db.Images.FirstOrDefaultAsync(x => x.Id == id);
@@ -22,7 +22,7 @@ namespace MovieWebsite.Images.Controllers
         
         [HttpPut("add")]
         [Authorize]
-        public async Task<IActionResult> AddImage(long id, IFormFile file)
+        public async Task<IActionResult> AddImage(int id, IFormFile file)
         {
             await using var db = new ImageContext();
             var length = file.Length;

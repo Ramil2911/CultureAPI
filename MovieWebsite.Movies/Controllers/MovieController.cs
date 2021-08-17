@@ -10,11 +10,11 @@ using MovieWebsite.Shared;
 
 namespace MovieWebsite.Movies.Controllers
 {
-    [Route("Characters")]
-    public class CharacterContext : Controller
+    [Route("movies")]
+    public class MovieController : Controller
     {
                 [HttpGet("FetchMovie")]
-        public async Task<IActionResult> FetchMovie(long id)
+        public async Task<IActionResult> FetchMovie(int id)
         {
             await using var db = new MovieContext();
             var movie = await db.Movies
@@ -36,11 +36,11 @@ namespace MovieWebsite.Movies.Controllers
         /// <param name="characterIds">Ids of movie characters</param>
         /// <param name="genres">Genre of movie see <see cref="Genre"/></param>
         /// <returns>Returns id of added movie if success</returns>
-        [Authorize()]
+        [Authorize(Roles = "admin")]
         [HttpPost("AddMovie")]
-        public async Task<IActionResult> AddMovie(string name, string originalName, long posterId, string description,
-            [FromQuery] HashSet<long> directorIds, [FromQuery] HashSet<long> actorIds,
-            [FromQuery] HashSet<long> characterIds, [FromQuery] HashSet<Genre> genres)
+        public async Task<IActionResult> AddMovie(string name, string originalName, int posterId, string description,
+            [FromQuery] HashSet<int> directorIds, [FromQuery] HashSet<int> actorIds,
+            [FromQuery] HashSet<int> characterIds, [FromQuery] HashSet<Genre> genres)
         {
             await using var db = new MovieContext();
             var movie = new Movie
@@ -75,9 +75,9 @@ namespace MovieWebsite.Movies.Controllers
         /// <returns>Returns id of added movie if success, set null if you dont want to update</returns>
         [Authorize]
         [HttpPost("UpdateMovie")]
-        public async Task<IActionResult> UpdateMovie(long id, string? name, string? originalName, long? posterId, string? description,
-            [FromQuery] HashSet<long>? directorIds, [FromQuery] HashSet<long>? actorIds,
-            [FromQuery] HashSet<long>? characterIds, [FromQuery] HashSet<Genre>? genres)
+        public async Task<IActionResult> UpdateMovie(int id, string? name, string? originalName, int? posterId, string? description,
+            [FromQuery] HashSet<int>? directorIds, [FromQuery] HashSet<int>? actorIds,
+            [FromQuery] HashSet<int>? characterIds, [FromQuery] HashSet<Genre>? genres)
         {
             //this function should not be run very often, so efficiency is not so important
             await using var db = new MovieContext();

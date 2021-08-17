@@ -6,10 +6,11 @@ namespace MovieWebsite.Characters.Models
 {
     public class Character
     {
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        public int Id { get; set; }
         
-        public long PosterId { get; set; }
+        public int PosterId { get; set; }
         
         public string Description { get; set; }
         
@@ -19,7 +20,7 @@ namespace MovieWebsite.Characters.Models
         [MinLength(2)]
         public string OriginalFullName { get; set; }
 
-        [Required, MinLength(1)] public HashSet<long> Persons { get; set; } = new HashSet<long>();
-        [Required, MinLength(1)] public HashSet<long> Movies { get; set; } = new HashSet<long>();
+        [Required, MinLength(1)] public HashSet<int> Persons { get; set; } = new HashSet<int>();
+        [Required, MinLength(1)] public HashSet<int> Movies { get; set; } = new HashSet<int>();
     }
 }

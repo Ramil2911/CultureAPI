@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieWebsite.Shared", "Movi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieWebsite.Movies", "MovieWebsite.Movies\MovieWebsite.Movies.csproj", "{836BD5AA-DAAD-4141-A270-B5FB4359FF1A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieWebsite.Blogs", "MovieWebsite.Blogs\MovieWebsite.Blogs.csproj", "{BA28407A-01D7-4123-8BEF-FF8D4DC45C9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{836BD5AA-DAAD-4141-A270-B5FB4359FF1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{836BD5AA-DAAD-4141-A270-B5FB4359FF1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{836BD5AA-DAAD-4141-A270-B5FB4359FF1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA28407A-01D7-4123-8BEF-FF8D4DC45C9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA28407A-01D7-4123-8BEF-FF8D4DC45C9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA28407A-01D7-4123-8BEF-FF8D4DC45C9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA28407A-01D7-4123-8BEF-FF8D4DC45C9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

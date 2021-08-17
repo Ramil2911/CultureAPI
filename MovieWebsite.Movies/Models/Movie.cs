@@ -7,10 +7,11 @@ namespace MovieWebsite.Movies.Models
 {
     public class Movie
     {
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        public int Id { get; set; }
         
-        public long PosterId { get; set; }
+        public int PosterId { get; set; }
         
         public string Description { get; set; }
         
@@ -22,8 +23,8 @@ namespace MovieWebsite.Movies.Models
 
         [Required, MinLength(1)] public HashSet<Genre> Genres { get; set; } = new HashSet<Genre>();
         
-        [Required] public HashSet<long> DirectorIds { get; set; } = new HashSet<long>();
-        [Required] public HashSet<long> ActorIds { get; set; } = new HashSet<long>();
-        [Required] public HashSet<long> CharacterIds { get; set; } = new HashSet<long>();
+        [Required] public HashSet<int> DirectorIds { get; set; } = new HashSet<int>();
+        [Required] public HashSet<int> ActorIds { get; set; } = new HashSet<int>();
+        [Required] public HashSet<int> CharacterIds { get; set; } = new HashSet<int>();
     }
 }

@@ -13,7 +13,7 @@ namespace MovieWebsite.Accounts.Controllers
     public class AccountController : Controller
     {
 
-        [HttpPost("/token")]
+        [HttpPost("/Login")]
         public IActionResult Token(string username, string password)
         {
             var identity = GetIdentity(username, password);
@@ -49,9 +49,10 @@ namespace MovieWebsite.Accounts.Controllers
             if (person == null) return null;
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, person.Login),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role),
-                new Claim("role", person.Role),
+                new(ClaimsIdentity.DefaultNameClaimType, person.Login),
+                new(ClaimsIdentity.DefaultRoleClaimType, person.Role),
+                new("role", person.Role),
+                new("id", person.Id.ToString())
             };
             var claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,

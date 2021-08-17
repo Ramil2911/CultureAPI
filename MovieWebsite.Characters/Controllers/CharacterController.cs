@@ -14,7 +14,7 @@ namespace MovieWebsite.Characters.Controllers
     public class CharacterController : Controller
     {
         [HttpGet("FetchCharacter")]
-        public async Task<IActionResult> FetchCharacter(long id)
+        public async Task<IActionResult> FetchCharacter(int id)
         {
             await using var db = new CharacterContext();
             var character = await db.Characters
@@ -38,8 +38,8 @@ namespace MovieWebsite.Characters.Controllers
         /// <returns>Returns id of added Character if success</returns>
         [Authorize()]
         [HttpPost("AddCharacter")]
-        public async Task<IActionResult> AddCharacter(string name, string originalName, long posterId, string description,
-            [FromQuery] HashSet<long> persons, [FromQuery] HashSet<long> movies)
+        public async Task<IActionResult> AddCharacter(string name, string originalName, int posterId, string description,
+            [FromQuery] HashSet<int> persons, [FromQuery] HashSet<int> movies)
         {
             await using var db = new CharacterContext();
             var character = new Character
@@ -72,8 +72,8 @@ namespace MovieWebsite.Characters.Controllers
         /// <returns>Returns id of added Character if success, set null if you dont want to update</returns>
         [Authorize]
         [HttpPost("UpdateCharacter")]
-        public async Task<IActionResult> UpdateCharacter(long id, string? name, string? originalName, long? posterId, string? description,
-            [FromQuery] HashSet<long>? persons, [FromQuery] HashSet<long>? movies)
+        public async Task<IActionResult> UpdateCharacter(int id, string? name, string? originalName, int? posterId, string? description,
+            [FromQuery] HashSet<int>? persons, [FromQuery] HashSet<int>? movies)
         {
             //this function should not be run very often, so efficiency is not so important
             await using var db = new CharacterContext();

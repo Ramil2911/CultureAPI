@@ -5,6 +5,11 @@ namespace MovieWebsite.Characters.Models.Databases
     public class CharacterContext : DbContext
     {
         public DbSet<Character> Characters { get; set; }
+
+        public CharacterContext()
+        {
+            Database.EnsureCreated();
+        }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -16,7 +21,6 @@ namespace MovieWebsite.Characters.Models.Databases
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Database.EnsureCreated();
             modelBuilder.Entity<Character>(x => x
                 .HasData(new Character
                 {
@@ -26,7 +30,6 @@ namespace MovieWebsite.Characters.Models.Databases
                     OriginalFullName = "Вася Петькин"
                 }));
             
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

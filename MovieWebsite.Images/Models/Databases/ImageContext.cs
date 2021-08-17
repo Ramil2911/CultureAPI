@@ -5,6 +5,11 @@ namespace MovieWebsite.Images.Models.Databases
     public class ImageContext : DbContext
     {
         public DbSet<Image> Images { get; set; }
+
+        public ImageContext()
+        {
+            Database.EnsureCreated();
+        }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -16,9 +21,6 @@ namespace MovieWebsite.Images.Models.Databases
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Database.EnsureCreated();
-
-            base.OnModelCreating(modelBuilder);
         }
     }
 }
