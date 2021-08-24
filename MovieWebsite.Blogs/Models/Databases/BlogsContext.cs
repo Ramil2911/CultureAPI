@@ -7,6 +7,7 @@ namespace MovieWebsite.Blogs.Models.Databases
     public class BlogsContext : DbContext
     {
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Post> DeletedPosts { get; set; }
 
         public BlogsContext()
         {

@@ -18,6 +18,7 @@ namespace MovieWebsite.Blogs.Controllers
         {
             await using var db = new BlogsContext();
             var draft = await db.Posts.AsNoTracking().FirstOrDefaultAsync(x => x.Guid == guid);
+            if (draft is null) return NotFound("Draft not found");
             return Json(draft);
         }
 
@@ -26,6 +27,7 @@ namespace MovieWebsite.Blogs.Controllers
         {
             await using var db = new BlogsContext();
             var draft = await db.Posts.AsNoTracking().Where(x => x.AuthorId == userId).ToArrayAsync();
+            if (draft is null) return NotFound("Draft not found");
             return Json(draft);
         }
         
@@ -43,7 +45,7 @@ namespace MovieWebsite.Blogs.Controllers
         }
         
         [Authorize]
-        [HttpPut("add")]
+        [HttpPut("{guid:Guid}")]
         public async Task<IActionResult> AddPost(Guid guid)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -52,6 +54,7 @@ namespace MovieWebsite.Blogs.Controllers
             
             await using var draftsdb = new DraftsContext();
             var draft = await draftsdb.Drafts.AsNoTracking().FirstOrDefaultAsync(x => x.Guid == guid);
+            if (draft is null) return NotFound("Draft not found");
             if (draft.AuthorId != userId) return Forbid();
 
             await using var postsdb = new BlogsContext();
@@ -66,17 +69,28 @@ namespace MovieWebsite.Blogs.Controllers
             
             return Ok();
         }
-
-        //TODO: that shouldn't clear post ID to prevent accidental links
+        
         [Authorize]
-        [HttpDelete("remove")]
-        public async Task<IActionResult> DeletePost()
+        [HttpDelete("{guid:Guid}")]
+        public async Task<IActionResult> DeletePost(Guid guid)
         {
-            throw new NotImplementedException();
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var userId = identity.GetIdClaim();
+            if (!userId.HasValue) return Unauthorized();
+            
+            await using var postsdb = new BlogsContext();
+            var post = await postsdb.Posts.FirstOrDefaultAsync(x => x.Guid == guid);
+            if (post is null) return NotFound("Post not found");
+            if (post.AuthorId != userId) return Forbid("You have no access to that post.");
+
+            postsdb.DeletedPosts.Add(post);
+            postsdb.Posts.Remove(post);
+            await postsdb.SaveChangesAsync();
+            return Ok();
         }
         
         [Authorize]
-        [HttpGet("{guid:Guid}/rankup")]
+        [HttpHead("{guid:Guid}/rankup")]
         public async Task<IActionResult> RankPostUp(Guid guid)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -86,6 +100,7 @@ namespace MovieWebsite.Blogs.Controllers
             var isModified = false;
             await using var postsdb = new BlogsContext();
             var post = await postsdb.Posts.FirstOrDefaultAsync(x => x.Guid == guid);
+            if (post is null) return BadRequest("Post not found");
             if (post.AuthorId == userId) return Forbid();
             if (post.RankDowners.Contains(userId.Value))
             {
@@ -107,7 +122,7 @@ namespace MovieWebsite.Blogs.Controllers
             return Ok();
         }
         [Authorize]
-        [HttpGet("{guid:Guid}/rankdown")]
+        [HttpHead("{guid:Guid}/rankdown")]
         public async Task<IActionResult> RankPostDown(Guid guid)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -117,6 +132,7 @@ namespace MovieWebsite.Blogs.Controllers
             var isModified = false;
             await using var postsdb = new BlogsContext();
             var post = await postsdb.Posts.FirstOrDefaultAsync(x => x.Guid == guid);
+            if (post is null) return BadRequest("Post not found");
             if (post.AuthorId == userId) return Forbid();
             if (post.RankUppers.Contains(userId.Value))
             {
@@ -139,7 +155,7 @@ namespace MovieWebsite.Blogs.Controllers
         }
         
         [Authorize]
-        [HttpGet("{guid:Guid}/rankclean")]
+        [HttpHead("{guid:Guid}/rankclean")]
         public async Task<IActionResult> CleanRankPost(Guid guid)
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -148,6 +164,7 @@ namespace MovieWebsite.Blogs.Controllers
             
             await using var postsdb = new BlogsContext();
             var post = await postsdb.Posts.FirstOrDefaultAsync(x => x.Guid == guid);
+            if (post is null) return BadRequest("Post not found");
 
             if (post.RankDowners.Contains(userId.Value)) post.RankDowners.Remove(userId.Value);
             if (post.RankUppers.Contains(userId.Value)) post.RankUppers.Remove(userId.Value);

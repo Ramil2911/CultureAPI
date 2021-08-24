@@ -14,7 +14,7 @@ namespace MovieWebsite.Blogs.Controllers
     [Route("drafts")]
     public class DraftsController : Controller
     {
-        [HttpPost("add")]
+        [HttpPut("new/{title}")]
         [Authorize]
         public async Task<IActionResult> AddDraft(string title)
         {
@@ -36,7 +36,7 @@ namespace MovieWebsite.Blogs.Controllers
             return Json(new {guid=draft.Guid});
         }
         
-        [HttpPost("update")]
+        [HttpPut("{guid:Guid}")]
         [Authorize]
         public async Task<IActionResult> UpdateDraft(Guid guid, [FromBody] UpdatePostBody body)
         {
@@ -47,21 +47,21 @@ namespace MovieWebsite.Blogs.Controllers
             await using var db = new DraftsContext();
             var draft = await db.Drafts.FirstOrDefaultAsync(x => x.Guid == guid);
 
-            if (body.bodyHtml is not null)
-                draft.BodyHtml = body.bodyHtml;
-            if (body.bodyRaw is not null)
-                draft.BodyRaw = body.bodyRaw;
-            if (body.title is not null)
-                draft.Title = body.title;
-            if (body.note is not null)
-                draft.Note = body.note;
+            if (body.BodyHtml is not null)
+                draft.BodyHtml = body.BodyHtml;
+            if (body.BodyRaw is not null)
+                draft.BodyRaw = body.BodyRaw;
+            if (body.Title is not null)
+                draft.Title = body.Title;
+            if (body.Note is not null)
+                draft.Note = body.Note;
             
             await db.SaveChangesAsync();
 
             return Ok();
         }
         
-        [HttpDelete("delete")]
+        [HttpDelete("{guid:Guid}")]
         [Authorize]
         public async Task<IActionResult> DeleteDraft(Guid guid)
         {
@@ -77,7 +77,7 @@ namespace MovieWebsite.Blogs.Controllers
             return Ok();
         }
         
-        [HttpGet("get")]
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> FetchDrafts()
         {
@@ -90,7 +90,7 @@ namespace MovieWebsite.Blogs.Controllers
             return Json(draftGuids);
         }
         
-        [HttpGet("get/{guid:Guid}")]
+        [HttpGet("{guid:Guid}")]
         [Authorize]
         public async Task<IActionResult> FetchDraft(Guid guid)
         {
@@ -106,10 +106,10 @@ namespace MovieWebsite.Blogs.Controllers
 
         public class UpdatePostBody
         {
-            public string? bodyRaw { get; set; }
-            public string? bodyHtml { get; set; }
-            public string? title { get; set; }
-            public string? note { get; set; }
+            public string? BodyRaw { get; set; }
+            public string? BodyHtml { get; set; }
+            public string? Title { get; set; }
+            public string? Note { get; set; }
         }
     }
 }
