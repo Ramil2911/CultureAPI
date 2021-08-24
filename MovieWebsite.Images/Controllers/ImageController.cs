@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using MovieWebsite.Images.Models;
 using MovieWebsite.Images.Models.Databases;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using MovieWebsite.Shared;
 
 namespace MovieWebsite.Images.Controllers
 {
@@ -20,14 +23,19 @@ namespace MovieWebsite.Images.Controllers
             return File(image.ImageData, image.ImageType, image.ImageTitle);
         }
         
-        [HttpPut("add")]
+        [HttpPost("addFile")]
         [Authorize]
-        public async Task<IActionResult> AddImage(int id, IFormFile file)
+        public async Task<IActionResult> AddImageFile(IFormFile file)
         {
             await using var db = new ImageContext();
             var length = file.Length;
-            if (length < 0)
-                return BadRequest();
+            switch (length)
+            {
+                case <= 0:
+                    return Json(new { success = 0 });
+                case > 4194304:
+                    return Json(new { success = 0 });
+            }
 
             await using var fileStream = file.OpenReadStream();
             var bytes = new byte[length];
@@ -40,7 +48,35 @@ namespace MovieWebsite.Images.Controllers
             };
             await db.Images.AddAsync(image);
             await db.SaveChangesAsync();
-            return Ok();
+            return Json(new {success = 1, file=new {url=ServerIps.Value[4]+"/image/"+image.Id}});
+        }
+        
+        [HttpPost("addUrl")]
+        [Authorize]
+        public async Task<IActionResult> AddImageUrl(string url)
+        {
+            using var client = new WebClient();
+            var file = await client.DownloadDataTaskAsync(url);
+            
+            await using var db = new ImageContext();
+            var length = file.Length;
+            switch (length)
+            {
+                case <= 0:
+                    return Json(new { success = 0 });
+                case > 4194304:
+                    return Json(new { success = 0 });
+            }
+
+            var image = new Image
+            {
+                ImageData = file,
+                ImageTitle = "file",
+                ImageType = "application/octet-stream" //TODO: try to implement MIME detector
+            };
+            await db.Images.AddAsync(image);
+            await db.SaveChangesAsync();
+            return Json(new {success = 1, file=new {url=ServerIps.Value[4]+"/image/"+image.Id}});
         }
     }
 }
