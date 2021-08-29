@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieWebsite.Movies.Models;
 using MovieWebsite.Movies.Models.Databases;
-using MovieWebsite.Shared;
 
 namespace MovieWebsite.Movies.Controllers
 {
@@ -99,6 +98,8 @@ namespace MovieWebsite.Movies.Controllers
                 character.Movies = await db.Movies.Where(x => body.Movies.Contains(x.Id)).ToArrayAsync();
             if (body.Serials is not null && body.Serials.Count > 0)
                 character.Serials = await db.Serials.Where(x => body.Actors.Contains(x.Id)).ToArrayAsync();
+            if (body.FranchiseId.HasValue)
+                character.Franchise = await db.Franchises.FirstOrDefaultAsync(x => x.Id == body.FranchiseId);
 
             await db.SaveChangesAsync();
             return Ok(new {id=character.Id});
