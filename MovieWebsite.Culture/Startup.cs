@@ -95,7 +95,7 @@ namespace MovieWebsite.Movies
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MovieWebsite.Movies v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MovieWebsite.Culture v1"));
             }
 
             app.UseHttpsRedirection();

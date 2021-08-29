@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MovieWebsite.Persons.Models;
-using MovieWebsite.Persons.Models.Databases;
+using MovieWebsite.Movies.Models;
+using MovieWebsite.Movies.Models.Databases;
 using MovieWebsite.Shared;
 
-namespace MovieWebsite.Persons.Controllers
+/*namespace MovieWebsite.Movies.Controllers
 {
     public class PersonController : Controller
     {
@@ -127,4 +127,4 @@ namespace MovieWebsite.Persons.Controllers
             return Json(persons);
         }
     }
-}
+}*/

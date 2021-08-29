@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MovieWebsite.Persons.Models
+namespace MovieWebsite.Movies.Models
 {
-    public class Person
+    public class Character
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -19,8 +19,12 @@ namespace MovieWebsite.Persons.Models
         
         [MinLength(2)]
         public string OriginalFullName { get; set; }
-
-        [Required, MinLength(1)] public HashSet<int> Characters { get; set; } = new HashSet<int>();
-        [Required, MinLength(1)] public HashSet<int> Movies { get; set; } = new HashSet<int>();
+        
+        [Required] public Franchise Franchise { get; set; }
+        public ICollection<Person> Actors { get; set; } = new List<Person>();
+        public ICollection<Book> Books { get; set; } = new List<Book>();
+        public ICollection<Game> Games { get; set; } = new List<Game>();
+        public ICollection<Movie> Movies { get; set; } = new List<Movie>();
+        public ICollection<Serial> Serials { get; set; } = new List<Serial>();
     }
 }

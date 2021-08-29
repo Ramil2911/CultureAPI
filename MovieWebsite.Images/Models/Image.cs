@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MovieWebsite.Images.Models
@@ -7,7 +8,7 @@ namespace MovieWebsite.Images.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public Guid Guid { get; set; }
         public string ImageTitle { get; set; }
         public string ImageType { get; set; }
         public byte[] ImageData { get; set; }

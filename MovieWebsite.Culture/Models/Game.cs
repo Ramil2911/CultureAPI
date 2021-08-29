@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using MovieWebsite.Shared;
 
 namespace MovieWebsite.Movies.Models
 {
-    public class Movie
+    public class Game
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -20,11 +19,10 @@ namespace MovieWebsite.Movies.Models
         
         [MinLength(2)]
         public string OriginalName { get; set; }
-
-        [Required, MinLength(1)] public HashSet<Genre> Genres { get; set; } = new HashSet<Genre>();
         
-        [Required] public HashSet<int> DirectorIds { get; set; } = new HashSet<int>();
-        [Required] public HashSet<int> ActorIds { get; set; } = new HashSet<int>();
-        [Required] public HashSet<int> CharacterIds { get; set; } = new HashSet<int>();
+        [Required] public Franchise Franchise { get; set; }
+        public ICollection<Company> Developers { get; set; } = new List<Company>();
+        public ICollection<Company> Publishers { get; set; } = new List<Company>();
+        public ICollection<Character> Characters { get; set; } = new List<Character>();
     }
 }

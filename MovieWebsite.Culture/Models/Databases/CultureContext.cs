@@ -1,25 +1,33 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using MovieWebsite.Shared;
 
 namespace MovieWebsite.Movies.Models.Databases
 {
-    /*public class ComnpositionContext : DbContext
+    public class CultureContext : DbContext
     {
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Serial> Serials { get; set; }
         public DbSet<Book> Books { get; set; }
         public DbSet<Person> Persons { get; set; }
         public DbSet<Character> Characters { get; set; }
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<Franchise> Franchises { get; set; }
+        public DbSet<Game> Games { get; set; }
 
-        public ComnpositionContext()
+        /*public CultureContext()
         {
             Database.EnsureCreated();
         }
         
-        public ComnpositionContext(DbContextOptions<ComnpositionContext> options)
+        public CultureContext(DbContextOptions<CultureContext> options)
             : base(options)
         {
             Database.EnsureCreated();
-        }
+        }*/
             
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -28,7 +36,28 @@ namespace MovieWebsite.Movies.Models.Databases
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //Map movies
+            //Map movies+persons
+            modelBuilder.Entity<Movie>()
+                .HasMany(x => x.Actors)
+                .WithMany(x => x.MoviesAsActor);
+            modelBuilder.Entity<Movie>()
+                .HasMany(x => x.Directors)
+                .WithMany(x => x.MoviesAsDirector);
+            //Map serials+persons
+            modelBuilder.Entity<Serial>()
+                .HasMany(x => x.Actors)
+                .WithMany(x => x.SerialsAsActor);
+            modelBuilder.Entity<Serial>()
+                .HasMany(x => x.Directors)
+                .WithMany(x => x.SerialsAsDirector);
+            //Map games+companies
+            modelBuilder.Entity<Game>()
+                .HasMany(x => x.Publishers)
+                .WithMany(x => x.GamesAsPublisher);
+            modelBuilder.Entity<Game>()
+                .HasMany(x => x.Developers)
+                .WithMany(x => x.GamesAsDeveloper);
+            /*//Map movies
             modelBuilder.Entity<Movie>()
                 .HasMany(x => x.Directors)
                 .WithMany(x => x.Movies)
@@ -158,7 +187,28 @@ namespace MovieWebsite.Movies.Models.Databases
                 x=>x
                     .HasOne(y=>y.Person)
                     .WithMany(y=>y.PersonCharacters)
-                    .HasForeignKey(y=>y.PersonId));
+                    .HasForeignKey(y=>y.PersonId));*/
+            var enumValueComparer = new ValueComparer<HashSet<Genre>>(
+                (c1, c2) => c1.SequenceEqual(c2),
+                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                c => c.ToHashSet());
+            var intValueComparer = new ValueComparer<HashSet<int>>(
+                (c1, c2) => c1.SequenceEqual(c2),
+                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                c => c.ToHashSet());
+            
+            modelBuilder.Entity<Movie>()
+                .Property(e => e.Genres)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(Enum.Parse<Genre>).ToHashSet())
+                .Metadata.SetValueComparer(enumValueComparer);
+            modelBuilder.Entity<Serial>()
+                .Property(e => e.Genres)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(Enum.Parse<Genre>).ToHashSet())
+                .Metadata.SetValueComparer(enumValueComparer);
         }
-    }*/
+    }
 }

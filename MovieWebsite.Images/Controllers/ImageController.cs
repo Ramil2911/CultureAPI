@@ -7,6 +7,7 @@ using MovieWebsite.Images.Models;
 using MovieWebsite.Images.Models.Databases;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net;
 using MovieWebsite.Shared;
 
@@ -15,11 +16,11 @@ namespace MovieWebsite.Images.Controllers
     [Route("image")]
     public class ImageController : Controller
     {
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetImage(int id)
+        [HttpGet("{guid:Guid}")]
+        public async Task<IActionResult> GetImage(Guid guid)
         {
             await using var db = new ImageContext();
-            var image = await db.Images.FirstOrDefaultAsync(x => x.Id == id);
+            var image = await db.Images.FirstOrDefaultAsync(x => x.Guid == guid);
             return File(image.ImageData, image.ImageType, image.ImageTitle);
         }
         
@@ -48,7 +49,7 @@ namespace MovieWebsite.Images.Controllers
             };
             await db.Images.AddAsync(image);
             await db.SaveChangesAsync();
-            return Json(new {success = 1, file=new {url=ServerIps.Value[4]+"/image/"+image.Id}});
+            return Json(new {success = 1, file=new {url=ServerIps.Value[4]+"/image/"+image.Guid}});
         }
         
         [HttpPost("addUrl")]
@@ -76,7 +77,15 @@ namespace MovieWebsite.Images.Controllers
             };
             await db.Images.AddAsync(image);
             await db.SaveChangesAsync();
-            return Json(new {success = 1, file=new {url=ServerIps.Value[4]+"/image/"+image.Id}});
+            return Json(new {success = 1, file=new {url=ServerIps.Value[4]+"/image/"+image.Guid}});
+        }
+        
+        [Internal]
+        [HttpGet("check")]
+        public async Task<IActionResult> ImageExists(Guid guid)
+        {
+            await using var db = new ImageContext();
+            return db.Images.AsNoTracking().Any(x => x.Guid == guid) ? Ok() : NotFound();
         }
     }
 }

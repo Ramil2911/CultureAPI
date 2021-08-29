@@ -8,6 +8,7 @@ namespace MovieWebsite.Blogs.Models.Databases
     {
         public DbSet<Post> Posts { get; set; }
         public DbSet<Post> DeletedPosts { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         public BlogsContext()
         {
@@ -31,6 +32,17 @@ namespace MovieWebsite.Blogs.Models.Databases
                     v => string.Join(',', v),
                     v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToHashSet());
             modelBuilder.Entity<Post>()
+                .Property(e => e.RankDowners)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToHashSet());
+
+            modelBuilder.Entity<Comment>()
+                .Property(e => e.RankUppers)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToHashSet());
+            modelBuilder.Entity<Comment>()
                 .Property(e => e.RankDowners)
                 .HasConversion(
                     v => string.Join(',', v),

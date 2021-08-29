@@ -8,7 +8,7 @@ using MovieWebsite.Movies.Models;
 using MovieWebsite.Movies.Models.Databases;
 using MovieWebsite.Shared;
 
-namespace MovieWebsite.Movies.Controllers
+/*namespace MovieWebsite.Movies.Controllers
 {
     [Route("movies")]
     public class MovieController : Controller
@@ -136,4 +136,4 @@ namespace MovieWebsite.Movies.Controllers
             return Json(movies);
         }
     }
-}
+}*/
