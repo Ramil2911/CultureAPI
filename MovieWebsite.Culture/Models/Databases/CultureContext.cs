@@ -18,7 +18,7 @@ namespace MovieWebsite.Movies.Models.Databases
         public DbSet<Franchise> Franchises { get; set; }
         public DbSet<Game> Games { get; set; }
 
-        /*public CultureContext()
+        public CultureContext()
         {
             Database.EnsureCreated();
         }
@@ -27,7 +27,7 @@ namespace MovieWebsite.Movies.Models.Databases
             : base(options)
         {
             Database.EnsureCreated();
-        }*/
+        }
             
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
