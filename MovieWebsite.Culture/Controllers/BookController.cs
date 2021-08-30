@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -126,7 +127,7 @@ namespace MovieWebsite.Movies.Controllers
 
         public class BookRequestBody
         {
-            public int? PosterId { get; set; }
+            public Guid? PosterId { get; set; }
             public string? Description { get; set; }
             public string? Name { get; set; }
             public string? OriginalName { get; set; }

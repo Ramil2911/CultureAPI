@@ -37,7 +37,7 @@ using MovieWebsite.Shared;
         /// <returns>Returns id of added Person if success</returns>
         [Authorize()]
         [HttpPost("AddPerson")]
-        public async Task<IActionResult> AddPerson(string name, string originalName, int posterId, string description,
+        public async Task<IActionResult> AddPerson(string name, string originalName, Guid?PosterId, string description,
             [FromQuery] HashSet<int> characters, [FromQuery] HashSet<int> movies)
         {
             await using var db = new PersonContext();
@@ -71,7 +71,7 @@ using MovieWebsite.Shared;
         /// <returns>Returns id of added Person if success, set null if you dont want to update</returns>
         [Authorize]
         [HttpPost("UpdatePerson")]
-        public async Task<IActionResult> UpdatePerson(int id, string? name, string? originalName, int? posterId, string? description,
+        public async Task<IActionResult> UpdatePerson(int id, string? name, string? originalName, Guid? PosterId, string? description,
             [FromQuery] HashSet<int>? characters, [FromQuery] HashSet<int>? movies)
         {
             //this function should not be run very often, so efficiency is not so important

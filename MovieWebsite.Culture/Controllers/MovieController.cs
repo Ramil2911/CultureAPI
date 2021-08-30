@@ -38,7 +38,7 @@ using MovieWebsite.Shared;
         /// <returns>Returns id of added movie if success</returns>
         [Authorize(Roles = "admin")]
         [HttpPost("AddMovie")]
-        public async Task<IActionResult> AddMovie(string name, string originalName, int posterId, string description,
+        public async Task<IActionResult> AddMovie(string name, string originalName, Guid?PosterId, string description,
             [FromQuery] HashSet<int> directorIds, [FromQuery] HashSet<int> actorIds,
             [FromQuery] HashSet<int> characterIds, [FromQuery] HashSet<Genre> genres)
         {
@@ -75,7 +75,7 @@ using MovieWebsite.Shared;
         /// <returns>Returns id of added movie if success, set null if you dont want to update</returns>
         [Authorize]
         [HttpPost("UpdateMovie")]
-        public async Task<IActionResult> UpdateMovie(int id, string? name, string? originalName, int? posterId, string? description,
+        public async Task<IActionResult> UpdateMovie(int id, string? name, string? originalName, Guid? PosterId, string? description,
             [FromQuery] HashSet<int>? directorIds, [FromQuery] HashSet<int>? actorIds,
             [FromQuery] HashSet<int>? characterIds, [FromQuery] HashSet<Genre>? genres)
         {

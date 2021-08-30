@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using MovieWebsite.Shared;
@@ -11,7 +12,7 @@ namespace MovieWebsite.Movies.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
-        public int PosterId { get; set; }
+        public Guid?PosterId { get; set; }
         
         public string Description { get; set; }
         
