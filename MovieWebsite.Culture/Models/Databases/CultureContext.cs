@@ -50,7 +50,7 @@ namespace MovieWebsite.Movies.Models.Databases
             modelBuilder.Entity<Serial>()
                 .HasMany(x => x.Directors)
                 .WithMany(x => x.SerialsAsDirector);
-            //Map games+companies
+            //Map movies+companies
             modelBuilder.Entity<Game>()
                 .HasMany(x => x.Publishers)
                 .WithMany(x => x.GamesAsPublisher);

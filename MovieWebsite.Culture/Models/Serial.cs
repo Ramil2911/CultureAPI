@@ -12,7 +12,7 @@ namespace MovieWebsite.Movies.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
-        public Guid?PosterId { get; set; }
+        public Guid PosterId { get; set; }
         
         public string Description { get; set; }
         

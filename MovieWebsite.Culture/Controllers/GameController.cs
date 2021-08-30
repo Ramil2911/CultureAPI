@@ -11,7 +11,7 @@ using MovieWebsite.Movies.Models.Databases;
 
 namespace MovieWebsite.Movies.Controllers
 {
-[Route("culture/games")]
+    [Route("culture/games")]
     public class GameController : Controller
     {
         [HttpGet("{id:int}")]
@@ -115,7 +115,7 @@ namespace MovieWebsite.Movies.Controllers
         public async Task<IActionResult> FetchGames(uint lenght, uint skip)
         {
             await using var db = new CultureContext();
-            var games = await db.Companies.AsNoTracking()
+            var games = await db.Games.AsNoTracking()
                 .OrderBy(x=>x.Id)
                 .Skip((int) skip)
                 .Take((int) lenght)

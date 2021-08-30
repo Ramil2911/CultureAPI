@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,15 +10,15 @@ using MovieWebsite.Movies.Models;
 using MovieWebsite.Movies.Models.Databases;
 using MovieWebsite.Shared;
 
-/*namespace MovieWebsite.Movies.Controllers
+namespace MovieWebsite.Movies.Controllers
 {
-    [Route("movies")]
+    [Route("culture/movies")]
     public class MovieController : Controller
     {
-                [HttpGet("FetchMovie")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> FetchMovie(int id)
         {
-            await using var db = new MovieContext();
+            await using var db = new CultureContext();
             var movie = await db.Movies
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -25,96 +27,89 @@ using MovieWebsite.Shared;
         }
 
         /// <summary>
-        /// Adds movie to database
+        /// Adds Movie to database
         /// </summary>
-        /// <param name="name">Movie name in russian</param>
-        /// <param name="originalName">Movie name in its original language</param>
-        /// <param name="posterId">Id of movie poster on image server</param>
-        /// <param name="description">Description of movie in Russian</param>
-        /// <param name="directorIds">Ids of movie directors</param>
-        /// <param name="actorIds">Ids of movie actors</param>
-        /// <param name="characterIds">Ids of movie characters</param>
-        /// <param name="genres">Genre of movie see <see cref="Genre"/></param>
-        /// <returns>Returns id of added movie if success</returns>
+        /// <returns>Returns id of added Movie if success</returns>
         [Authorize(Roles = "admin")]
-        [HttpPost("AddMovie")]
-        public async Task<IActionResult> AddMovie(string name, string originalName, Guid?PosterId, string description,
-            [FromQuery] HashSet<int> directorIds, [FromQuery] HashSet<int> actorIds,
-            [FromQuery] HashSet<int> characterIds, [FromQuery] HashSet<Genre> genres)
+        [HttpPut()]
+        public async Task<IActionResult> AddMovie([FromBody] MovieRequestBody body)
         {
-            await using var db = new MovieContext();
+            await using var db = new CultureContext();
+
+            var errorBuilder = new StringBuilder("");
+            if (body.Name is null) errorBuilder.Append("Name data not found;\n");
+            if (body.Characters is null) errorBuilder.Append("Characters data not found;\n");
+            if (body.PosterId is null) errorBuilder.Append("Poster data not found;\n");
+            if (body.Description is null) errorBuilder.Append("Description data not found;\n");
+            if (body.Directors is null) errorBuilder.Append("Directors data not found;\n");
+            if (body.Actors is null) errorBuilder.Append("Actors data not found;\n");
+            if (!body.FranchiseId.HasValue) errorBuilder.Append("Franchise data not found;\n");
+            if (errorBuilder.Length != 0) return BadRequest(errorBuilder.ToString());
+
             var movie = new Movie
             {
-                Name = name,
-                OriginalName = originalName,
-                PosterId = posterId,
-                Description = description,
-                Genres = genres,
-                DirectorIds = directorIds,
-                ActorIds = actorIds,
-                CharacterIds = characterIds
+                Name = body.Name!,
+                PosterId = body.PosterId!.Value,
+                Description = body.Description!,
+                Franchise = await db.Franchises.FirstOrDefaultAsync(x=>body.FranchiseId!.Value == x.Id),
+                Directors = await db.Persons.Where(x=>body.Directors!.Contains(x.Id)).ToArrayAsync(),
+                Characters = await db.Characters.Where(x=>body.Characters!.Contains(x.Id)).ToArrayAsync(),
+                Actors = await db.Persons.Where(x=>body.Actors!.Contains(x.Id)).ToArrayAsync(),
+                Genres = body.Genres,
+                OriginalName = body.OriginalName
             };
-            db.Movies.Add(movie);
+            await db.Movies.AddAsync(movie);
             
             await db.SaveChangesAsync();
             return Ok(new {id=movie.Id});
         }
 
         /// <summary>
-        /// Updates movie in database
+        /// Updates Movie in database
         /// </summary>
-        /// <param name="id">Id of movie to update</param>
-        /// <param name="name">Movie name in russian, set null if you dont want to update</param>
-        /// <param name="originalName">Movie name in its original language, set null if you dont want to update</param>
-        /// <param name="posterId">Id of movie poster on image server, set null if you dont want to update</param>
-        /// <param name="description">Description of movie in Russian, set null if you dont want to update</param>
-        /// <param name="directorIds">Ids of movie directors, set null if you dont want to update</param>
-        /// <param name="actorIds">Ids of movie actors, set null if you dont want to update</param>
-        /// <param name="characterIds">Ids of movie characters, set null if you dont want to update</param>
-        /// <param name="genres">Genre of movie see, set null if you dont want to update <see cref="Genre"/></param>
-        /// <returns>Returns id of added movie if success, set null if you dont want to update</returns>
-        [Authorize]
-        [HttpPost("UpdateMovie")]
-        public async Task<IActionResult> UpdateMovie(int id, string? name, string? originalName, Guid? PosterId, string? description,
-            [FromQuery] HashSet<int>? directorIds, [FromQuery] HashSet<int>? actorIds,
-            [FromQuery] HashSet<int>? characterIds, [FromQuery] HashSet<Genre>? genres)
+        /// <returns>Returns id of added Movie if success, set null if you dont want to update</returns>
+        [Authorize(Roles = "admin")]
+        [HttpPost("{id:int}")]
+        public async Task<IActionResult> UpdateMovie(int id, [FromBody] MovieRequestBody body)
         {
-            //this function should not be run very often, so efficiency is not so important
-            await using var db = new MovieContext();
+            //this function should not be run often, so efficiency is not important
+            await using var db = new CultureContext();
             var movie = await db.Movies
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (movie is null) return BadRequest("Movie not found");
-            if (originalName is not null)
-                movie.OriginalName = originalName;
-            if (posterId > 0)
-                movie.PosterId = posterId.Value;
-            if (description is not null)
-                movie.Description = description;
-            if (name is not null)
-                movie.Name = name;
-            if (genres is not null && genres.Count > 0)
-                movie.Genres = genres;
-            if (directorIds is not null && directorIds.Count > 0)
-                movie.DirectorIds = directorIds;
-            if (actorIds is not null && actorIds.Count > 0)
-                movie.ActorIds = actorIds;
-            if (characterIds is not null && characterIds.Count > 0)
-                movie.CharacterIds = characterIds;
             
+            if (body.OriginalName is not null)
+                movie.OriginalName = body.OriginalName;
+            if (body.Name is not null)
+                movie.Name = body.Name;
+            if (body.Description is not null)
+                movie.Description = body.Description;
+            if (body.Directors is not null && body.Directors.Count > 0)
+                movie.Directors = await db.Persons.Where(x => body.Directors.Contains(x.Id)).ToArrayAsync();
+            if (body.Characters is not null && body.Characters.Count > 0)
+                movie.Characters = await db.Characters.Where(x => body.Characters.Contains(x.Id)).ToArrayAsync();
+            if (body.Actors is not null && body.Actors.Count > 0)
+                movie.Actors = await db.Persons.Where(x => body.Actors.Contains(x.Id)).ToArrayAsync();
+            if (body.Genres is not null && body.Genres.Count > 0)
+                movie.Genres = body.Genres;
+            if (body.FranchiseId.HasValue)
+                movie.Franchise = await db.Franchises.FirstOrDefaultAsync(x => x.Id == body.FranchiseId);
+            
+
             await db.SaveChangesAsync();
             return Ok(new {id=movie.Id});
         }
         
         /// <summary>
-        /// Deletes movie from database
+        /// Deletes Movie from database
         /// </summary>
-        /// <param name="id">Id of movie to delete</param>
+        /// <param name="id">Id of Movie to delete</param>
         /// <returns>Returns Ok if success</returns>
         [Authorize(Roles = "admin")]
-        [HttpDelete("RemoveMovie")]
+        [HttpDelete()]
         public async Task<IActionResult> RemoveMovie(int id)
         {
-            await using var db = new MovieContext();
+            await using var db = new CultureContext();
             var movie = await db.Movies.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
             if (movie is null) return NotFound();
             db.Movies.Remove(movie);
@@ -124,10 +119,10 @@ using MovieWebsite.Shared;
         
         
         //TODO: More settings
-        [HttpGet("FetchMovies")]
+        [HttpGet("popular")]
         public async Task<IActionResult> FetchMovies(uint lenght, uint skip)
         {
-            await using var db = new MovieContext();
+            await using var db = new CultureContext();
             var movies = await db.Movies.AsNoTracking()
                 .OrderBy(x=>x.Id)
                 .Skip((int) skip)
@@ -135,5 +130,18 @@ using MovieWebsite.Shared;
                 .ToArrayAsync();
             return Json(movies);
         }
+
+        public class MovieRequestBody
+        {
+            public Guid? PosterId { get; set; }
+            public string? Description { get; set; }
+            public string? Name { get; set; }
+            public string? OriginalName { get; set; }
+            public HashSet<Genre>? Genres { get; set; } = new HashSet<Genre>();
+            public int? FranchiseId { get; set; }
+            public ICollection<int>? Directors { get; set; } = new List<int>();
+            public ICollection<int>? Actors { get; set; } = new List<int>();
+            public ICollection<int>? Characters { get; set; } = new List<int>();
+        }
     }
-}*/
+}

@@ -116,7 +116,7 @@ namespace MovieWebsite.Movies.Controllers
         public async Task<IActionResult> FetchFranchises(uint lenght, uint skip)
         {
             await using var db = new CultureContext();
-            var franchises = await db.Companies.AsNoTracking()
+            var franchises = await db.Games.AsNoTracking()
                 .OrderBy(x=>x.Id)
                 .Skip((int) skip)
                 .Take((int) lenght)
