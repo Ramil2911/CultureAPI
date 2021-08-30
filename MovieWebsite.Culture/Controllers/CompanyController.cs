@@ -128,12 +128,12 @@ namespace MovieWebsite.Movies.Controllers
         public async Task<IActionResult> FetchCompanys(uint lenght, uint skip)
         {
             await using var db = new CultureContext();
-            var companys = await db.Companies.AsNoTracking()
+            var companies = await db.Companies.AsNoTracking()
                 .OrderBy(x=>x.Id)
                 .Skip((int) skip)
                 .Take((int) lenght)
                 .ToArrayAsync();
-            return Json(companys);
+            return Json(companies);
         }
 
         public class CompanyRequestBody
