@@ -11,7 +11,7 @@ using MovieWebsite.Movies.Models.Databases;
 
 namespace MovieWebsite.Movies.Controllers
 {
-    [Microsoft.AspNetCore.Components.Route("culture/books")]
+    [Route("culture/books")]
     public class BookController : Controller
     {
         [HttpGet("{id:int}")]

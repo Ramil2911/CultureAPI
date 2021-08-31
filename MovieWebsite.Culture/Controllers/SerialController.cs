@@ -12,7 +12,7 @@ using MovieWebsite.Shared;
 
 namespace MovieWebsite.Movies.Controllers
 {
-    [Microsoft.AspNetCore.Components.Route("culture/serials")]
+    [Route("culture/serials")]
     public class SerialController : Controller
     {
         [HttpGet("{id:int}")]

@@ -10,7 +10,7 @@ using MovieWebsite.Movies.Models.Databases;
 
 namespace MovieWebsite.Movies.Controllers
 {
-[Route("culture/franchises")]
+    [Route("culture/franchises")]
     public class FranchiseController : Controller
     {
         [HttpGet("{id:int}")]

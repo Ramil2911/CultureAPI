@@ -13,17 +13,35 @@ using MovieWebsite.Shared;
 
 namespace MovieWebsite.Images.Controllers
 {
+    /// <summary>
+    /// Controller with image endpoints
+    /// </summary>
     [Route("image")]
     public class ImageController : Controller
     {
+        /// <summary>
+        /// Get saved image
+        /// </summary>
+        /// <param name="guid">Guid of image</param>
+        /// <returns>File</returns>
+        /// <response code="200">Success</response>
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         [HttpGet("{guid:Guid}")]
         public async Task<IActionResult> GetImage(Guid guid)
         {
             await using var db = new ImageContext();
             var image = await db.Images.FirstOrDefaultAsync(x => x.Guid == guid);
+            if (image is null) return NotFound();
             return File(image.ImageData, image.ImageType, image.ImageTitle);
         }
         
+        /// <summary>
+        /// Save image
+        /// </summary>
+        /// <param name="file">Image to save</param>
+        /// <returns>Json with success and file url or json with failure</returns>
+        [ProducesResponseType(200, Type = typeof(ImageResponseBody))]
         [HttpPost("addFile")]
         [Authorize]
         public async Task<IActionResult> AddImageFile(IFormFile file)
@@ -49,9 +67,15 @@ namespace MovieWebsite.Images.Controllers
             };
             await db.Images.AddAsync(image);
             await db.SaveChangesAsync();
-            return Json(new {success = 1, file=new {url=ServerIps.Value[4]+"/image/"+image.Guid}});
+            return Json(new ImageResponseBody() {success = 1, file=new ImageResponseBody.UrlContainer() {url=ServerIps.Value[4]+"/image/"+image.Guid}});
         }
         
+        /// <summary>
+        /// Adds image by its url
+        /// </summary>
+        /// <param name="url">Url of image</param>
+        /// <returns>Json with success and file url or json with failure</returns>
+        [ProducesResponseType(200, Type = typeof(ImageResponseBody))]
         [HttpPost("addUrl")]
         [Authorize]
         public async Task<IActionResult> AddImageUrl(string url)
@@ -77,15 +101,42 @@ namespace MovieWebsite.Images.Controllers
             };
             await db.Images.AddAsync(image);
             await db.SaveChangesAsync();
-            return Json(new {success = 1, file=new {url=ServerIps.Value[4]+"/image/"+image.Guid}});
+            return Json(new ImageResponseBody() {success = 1, file=new ImageResponseBody.UrlContainer() {url=ServerIps.Value[4]+"/image/"+image.Guid}});
         }
         
+        /// <summary>
+        /// [INTERNAL] Checks does image exist
+        /// </summary>
+        /// <param name="guid">Guid of image</param>
+        /// <returns>StatusCode</returns>
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         [Internal]
         [HttpGet("check")]
         public async Task<IActionResult> ImageExists(Guid guid)
         {
             await using var db = new ImageContext();
             return db.Images.AsNoTracking().Any(x => x.Guid == guid) ? Ok() : NotFound();
+        }
+
+        /// <summary>
+        /// Response body for image fet endpoint
+        /// </summary>
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public class ImageResponseBody
+        {
+            /// <summary>
+            /// Status code: 1 for success, 0 for fail
+            /// </summary>
+            public int success { get; set; }
+            /// <summary>
+            /// Container with file url
+            /// </summary>
+            public UrlContainer file { get; set; }
+            public class UrlContainer
+            {
+                public string url { get; set; }
+            }
         }
     }
 }
