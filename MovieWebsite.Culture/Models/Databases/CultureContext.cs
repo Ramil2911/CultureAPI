@@ -53,10 +53,46 @@ namespace MovieWebsite.Movies.Models.Databases
             //Map movies+companies
             modelBuilder.Entity<Game>()
                 .HasMany(x => x.Publishers)
-                .WithMany(x => x.GamesAsPublisher);
+                .WithMany(x => x.GamesAsPublisher)
+                .UsingEntity<Dictionary<string, object>>(
+                    "CompanyGame",
+                    j => j.HasOne<Company>().WithMany().OnDelete(DeleteBehavior.Restrict),
+                    j => j.HasOne<Game>().WithMany().OnDelete(DeleteBehavior.Restrict));
             modelBuilder.Entity<Game>()
                 .HasMany(x => x.Developers)
-                .WithMany(x => x.GamesAsDeveloper);
+                .WithMany(x => x.GamesAsDeveloper)
+                .UsingEntity<Dictionary<string, object>>(
+                    "CompanyGame",
+                    j => j.HasOne<Company>().WithMany().OnDelete(DeleteBehavior.Restrict),
+                    j => j.HasOne<Game>().WithMany().OnDelete(DeleteBehavior.Restrict));
+            modelBuilder.Entity<Book>()
+                .HasMany(x=>x.Characters)
+                .WithMany(x=>x.Books)
+                .UsingEntity<Dictionary<string, object>>(
+                    "CharacterBook",
+                    j => j.HasOne<Character>().WithMany().OnDelete(DeleteBehavior.Restrict),
+                    j => j.HasOne<Book>().WithMany().OnDelete(DeleteBehavior.Restrict));
+            modelBuilder.Entity<Game>()
+                .HasMany(x=>x.Characters)
+                .WithMany(x=>x.Games)
+                .UsingEntity<Dictionary<string, object>>(
+                    "CharacterGame",
+                    j => j.HasOne<Character>().WithMany().OnDelete(DeleteBehavior.Restrict),
+                    j => j.HasOne<Game>().WithMany().OnDelete(DeleteBehavior.Restrict));
+            modelBuilder.Entity<Movie>()
+                .HasMany(x=>x.Characters)
+                .WithMany(x=>x.Movies)
+                .UsingEntity<Dictionary<string, object>>(
+                    "CharacterMovie",
+                    j => j.HasOne<Character>().WithMany().OnDelete(DeleteBehavior.Restrict),
+                    j => j.HasOne<Movie>().WithMany().OnDelete(DeleteBehavior.Restrict));
+            modelBuilder.Entity<Serial>()
+                .HasMany(x=>x.Characters)
+                .WithMany(x=>x.Serials)
+                .UsingEntity<Dictionary<string, object>>(
+                    "CharacterMovie",
+                    j => j.HasOne<Character>().WithMany().OnDelete(DeleteBehavior.Restrict),
+                    j => j.HasOne<Serial>().WithMany().OnDelete(DeleteBehavior.Restrict));
             /*//Map movies
             modelBuilder.Entity<Movie>()
                 .HasMany(x => x.Directors)

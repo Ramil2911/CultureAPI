@@ -27,10 +27,10 @@ namespace MovieWebsite.Movies.Models
         [Required, MinLength(1)] 
         public HashSet<Genre> Genres { get; set; } = new HashSet<Genre>();
 
-        [Required] [JsonIgnore]
-        public Franchise Franchise { get; set; }
+        [JsonIgnore]
+        public Franchise? Franchise { get; set; }
         [NotMapped] 
-        public int FranchiseId => Franchise.Id;
+        public int FranchiseId => Franchise?.Id ?? -1;
         
         [JsonIgnore]
         public ICollection<Person> Directors { get; set; } = new List<Person>();

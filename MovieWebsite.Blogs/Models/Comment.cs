@@ -12,7 +12,7 @@ namespace MovieWebsite.Blogs.Models
         public Guid Guid { get; set; }
         public int AuthorId { get; set; }
         public string Text { get; set; } = "";
-        public HashSet<string> AttachmentUrls { get; set; } = new HashSet<string>();
+        public ICollection<string> AttachmentUrls { get; set; } = new List<string>();
         public bool IsDeleted { get; set; } = false;
         public DateTime TimeStamp { get; set; } = DateTime.Now;
         public HashSet<int> RankUppers { get; set; } = new HashSet<int>();
@@ -26,7 +26,7 @@ namespace MovieWebsite.Blogs.Models
         public Guid Guid { get; set; }
         public int AuthorId { get; set; }
         public string Text { get; set; }
-        public HashSet<string> AttachmentUrls { get; set; }
+        public ICollection<string> AttachmentUrls { get; set; } = new List<string>();
         public DateTime TimeStamp { get; set; }
         public HashSet<int> RankUppers { get; set; }
         public HashSet<int> RankDowners { get; set; }

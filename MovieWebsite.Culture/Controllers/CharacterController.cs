@@ -61,6 +61,10 @@ namespace MovieWebsite.Movies.Controllers
                 Movies = await db.Movies.Where(x=>body.Movies.Contains(x.Id)).ToArrayAsync(),
                 Serials = await db.Serials.Where(x=>body.Serials.Contains(x.Id)).ToArrayAsync(),
             };
+            if (body.FranchiseId.HasValue)
+                character.Franchise = await db.Franchises.FirstOrDefaultAsync(x => body.FranchiseId!.Value == x.Id);
+            else
+                character.Franchise = null;
             await db.Characters.AddAsync(character);
             
             await db.SaveChangesAsync();

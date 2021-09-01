@@ -23,10 +23,10 @@ namespace MovieWebsite.Movies.Models
         [MinLength(2)]
         public string OriginalFullName { get; set; }
         
-        [JsonIgnore] [Required] 
-        public Franchise Franchise { get; set; }
+        [JsonIgnore]  
+        public Franchise? Franchise { get; set; }
         [NotMapped]
-        public int FranchiseId => Franchise.Id;
+        public int FranchiseId => Franchise?.Id ?? -1;
         
         [JsonIgnore]
         public ICollection<Person> Actors { get; set; } = new List<Person>();

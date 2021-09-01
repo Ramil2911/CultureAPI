@@ -31,6 +31,21 @@ namespace MovieWebsite.Blogs.Models.Databases
                 .HasConversion(
                     v => string.Join(',', v),
                     v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToHashSet());
+            modelBuilder.Entity<Comment>()
+                .Property(e => e.RankUppers)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToHashSet());
+            modelBuilder.Entity<Comment>()
+                .Property(e => e.RankDowners)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToHashSet());
+            modelBuilder.Entity<Comment>()
+                .Property(e => e.AttachmentUrls)
+                .HasConversion(
+                    v => string.Join('|', v),
+                    v => v.Split('|', StringSplitOptions.RemoveEmptyEntries).ToHashSet());
         }
     }
 }

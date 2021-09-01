@@ -27,7 +27,7 @@ namespace MovieWebsite.Accounts.Models.Databases
                     {
                         Id = 1,
                         Username = "admin",
-                        PasswordHash = "",
+                        PasswordHash = "cN7owHGTd23c6+H/TA/Ysn3hrrNXtwCdEM6js9ZmPpWM420E",
                         Mail = "ramil2911912@gmail.com",
                         RegisterTime = DateTime.Parse("29.11.04"),
                         LastOnlineTime = DateTime.Now,
@@ -38,7 +38,7 @@ namespace MovieWebsite.Accounts.Models.Databases
                     {
                         Id = 2,
                         Username = "user",
-                        PasswordHash = "",
+                        PasswordHash = "cN7owHGTd23c6+H/TA/Ysn3hrrNXtwCdEM6js9ZmPpWM420E",
                         Mail = "ramil2911912@gmail.com",
                         RegisterTime = DateTime.Parse("29.11.04"),
                         LastOnlineTime = DateTime.Now,

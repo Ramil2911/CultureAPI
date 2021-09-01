@@ -69,7 +69,7 @@ namespace MovieWebsite.Blogs.Controllers
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ProducesResponseType(400)]
-        [HttpPut("{guid:Guid}")]
+        [HttpPost("{guid:Guid}")]
         [Authorize]
         public async Task<IActionResult> UpdateDraft(Guid guid, [FromBody] DraftRequestBody body)
         {

@@ -54,6 +54,8 @@ namespace MovieWebsite.Blogs.Models
             Note = post.Note;
             TimeStamp = post.TimeStamp;
             Rank = post.RankUppers.Count - post.RankDowners.Count;
+            RankUppers = post.RankUppers;
+            RankDowners = post.RankDowners;
         }
         
         /// <summary>
@@ -84,5 +86,13 @@ namespace MovieWebsite.Blogs.Models
         /// Rank of post
         /// </summary>
         public int Rank { get; set; }
+        /// <summary>
+        /// Ids of those who ranked post up
+        /// </summary>
+        public HashSet<int> RankUppers { get; set; }
+        /// <summary>
+        /// Ids of those who ranked post down
+        /// </summary>
+        public HashSet<int> RankDowners { get; set; }
     }
 }

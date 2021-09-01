@@ -22,11 +22,10 @@ namespace MovieWebsite.Movies.Models
         
         [MinLength(2)]
         public string OriginalName { get; set; }
-        
-        [JsonIgnore]
-        public Franchise Franchise { get; set; }
-        [NotMapped]
-        public int FranchiseId => Franchise.Id;
+
+        [JsonIgnore] public ICollection<Franchise> Franchises { get; set; } = new List<Franchise>();
+
+        [NotMapped] public IEnumerable<int> FranchisesIds => Franchises.Select(x => x.Id);
         
         [JsonIgnore]
         public ICollection<Movie> MoviesAsPublisher { get; set; } = new List<Movie>();

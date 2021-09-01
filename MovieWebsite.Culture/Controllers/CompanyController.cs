@@ -39,7 +39,7 @@ namespace MovieWebsite.Movies.Controllers
             if (body.Name is null) errorBuilder.Append("Name data not found;\n");
             if (!body.PosterId.HasValue) errorBuilder.Append("PosterId data not found;\n");
             if (body.Description is null) errorBuilder.Append("Description data not found;\n");
-            if (!body.FranchiseId.HasValue) errorBuilder.Append("Franchise data not found;\n");
+            if (body.Franchises is null) errorBuilder.Append("Franchises data not found;\n");
             if (body.GamesAsDeveloper is null) errorBuilder.Append("GamesAsDeveloper data not found;\n");
             if (body.GamesAsPublisher is null) errorBuilder.Append("GamesAsPublisher data not found;\n");
             if (body.MoviesAsDeveloper is null) errorBuilder.Append("MoviesAsDeveloper data not found;\n");
@@ -53,7 +53,7 @@ namespace MovieWebsite.Movies.Controllers
                 Name = body.Name!,
                 PosterId = body.PosterId!.Value,
                 Description = body.Description!,
-                Franchise = await db.Franchises.FirstOrDefaultAsync(x=>body.FranchiseId!.Value == x.Id),
+                Franchises = await db.Franchises.Where(x => body.Franchises.Contains(x.Id)).ToArrayAsync(),
                 GamesAsDeveloper = await db.Games.Where(x=>body.GamesAsDeveloper!.Contains(x.Id)).ToArrayAsync(),
                 GamesAsPublisher = await db.Games.Where(x=>body.GamesAsPublisher!.Contains(x.Id)).ToArrayAsync(),
                 MoviesAsDeveloper = await db.Movies.Where(x=>body.MoviesAsDeveloper!.Contains(x.Id)).ToArrayAsync(),
@@ -99,8 +99,8 @@ namespace MovieWebsite.Movies.Controllers
                 company.SerialsAsDeveloper = await db.Serials.Where(x => body.SerialsAsDeveloper.Contains(x.Id)).ToArrayAsync();
             if (body.SerialsAsPublisher is not null && body.SerialsAsPublisher.Count > 0)
                 company.SerialsAsPublisher = await db.Serials.Where(x => body.SerialsAsPublisher.Contains(x.Id)).ToArrayAsync();
-            if (body.FranchiseId.HasValue)
-                company.Franchise = await db.Franchises.FirstOrDefaultAsync(x => x.Id == body.FranchiseId);
+            if (body.Franchises is not null && body.Franchises.Count > 0)
+                company.Franchises = await db.Franchises.Where(x => body.Franchises.Contains(x.Id)).ToArrayAsync();
 
             await db.SaveChangesAsync();
             return Ok(new {id=company.Id});
@@ -142,7 +142,7 @@ namespace MovieWebsite.Movies.Controllers
             public Guid? PosterId { get; set; }
             public string? Description { get; set; }
             public string? Name { get; set; }
-            public int? FranchiseId { get; set; }
+            public ICollection<int>? Franchises { get; set; } = new List<int>();
             public ICollection<int>? MoviesAsPublisher { get; set; } = new List<int>();
             public ICollection<int>? MoviesAsDeveloper { get; set; } = new List<int>();
             public ICollection<int>? SerialsAsPublisher { get; set; } = new List<int>();

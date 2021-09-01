@@ -43,7 +43,6 @@ namespace MovieWebsite.Movies.Controllers
             if (body.Description is null) errorBuilder.Append("Description data not found;\n");
             if (body.Directors is null) errorBuilder.Append("Directors data not found;\n");
             if (body.Actors is null) errorBuilder.Append("Actors data not found;\n");
-            if (!body.FranchiseId.HasValue) errorBuilder.Append("Franchise data not found;\n");
             if (errorBuilder.Length != 0) return BadRequest(errorBuilder.ToString());
 
             var movie = new Movie
@@ -51,13 +50,16 @@ namespace MovieWebsite.Movies.Controllers
                 Name = body.Name!,
                 PosterId = body.PosterId!.Value,
                 Description = body.Description!,
-                Franchise = await db.Franchises.FirstOrDefaultAsync(x=>body.FranchiseId!.Value == x.Id),
                 Directors = await db.Persons.Where(x=>body.Directors!.Contains(x.Id)).ToArrayAsync(),
                 Characters = await db.Characters.Where(x=>body.Characters!.Contains(x.Id)).ToArrayAsync(),
                 Actors = await db.Persons.Where(x=>body.Actors!.Contains(x.Id)).ToArrayAsync(),
                 Genres = body.Genres,
                 OriginalName = body.OriginalName
             };
+            if (body.FranchiseId.HasValue)
+                movie.Franchise = await db.Franchises.FirstOrDefaultAsync(x => body.FranchiseId!.Value == x.Id);
+            else
+                movie.Franchise = null;
             await db.Movies.AddAsync(movie);
             
             await db.SaveChangesAsync();
